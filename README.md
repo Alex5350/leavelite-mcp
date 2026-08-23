@@ -59,7 +59,7 @@ Every failure surfaces as readable text carrying a **stable domain error code** 
 Requires the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0). Nothing else.
 
 ```bash
-git clone https://github.com/Alex5350/leavelite.git
+git clone https://github.com/Alex5350/leavelite-mcp.git
 cd leavelite
 dotnet run --project src/LeaveLite.Server
 # info: Now listening on: http://localhost:5020   (MCP: /mcp, health: /health)
