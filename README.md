@@ -20,6 +20,14 @@ consumption, approval authority and minimum team staffing.
 > [LedgerLite](https://github.com/Alex5350/ledgerlite) (REST API) and
 > [LedgerLite Web](https://github.com/Alex5350/ledgerlite-web) (Blazor) as a set.
 
+| MCP Inspector - the tool catalog | MCP Inspector - a live tool call |
+|:---:|:---:|
+| ![Tools](docs/screenshots/inspector-tools.png) | ![Tool run](docs/screenshots/inspector-tool-run.png) |
+
+Captured live from Anthropic's [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector)
+connected to this server: the full tool catalog with LLM-facing descriptions, and a real
+`check_employee_balance` execution returning Ada's computed balance.
+
 ## What it exposes
 
 | | Name | Purpose |
@@ -79,13 +87,21 @@ Then ask: *"Check Ada's vacation balance and forecast it three months out"* or
 npx @modelcontextprotocol/inspector dotnet run --project src/LeaveLite.Server
 ```
 
-**Raw protocol** - stateless Streamable HTTP:
+**Raw protocol** - stateless Streamable HTTP; this is a real response from the running server:
 
 ```bash
 curl -s http://localhost:5020/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call",
+       "params":{"name":"check_employee_balance",
+                 "arguments":{"employeeEmail":"ada@leavelite.io"}}}'
+```
+
+```json
+{"result":{"content":[{"type":"text","text":"Ada Lovelace (ada@leavelite.io) - Vacation
+ balance as of 2026-08-22: accrued 695.23h, consumed 0h, available 695.23h."}]},
+ "id":1,"jsonrpc":"2.0"}
 ```
 
 ## Architecture
@@ -110,6 +126,29 @@ Every architectural decision - and the challenges each one surfaced - is recorde
 [docs/adr/](docs/adr/): clean architecture, the SDK/transport choice, persistence, CQRS
 without a mediator, accrual purity, error surfacing, domain events over a bounded channel,
 and protocol-level testing. The build order lives in [docs/process.md](docs/process.md).
+
+### How a tool call flows
+
+```mermaid
+flowchart LR
+    C["MCP client<br/>(Claude Desktop · Inspector)"] -->|"Streamable HTTP - JSON-RPC"| H
+    subgraph Server["LeaveLite.Server (ASP.NET Core)"]
+        H["MCP host<br/>10 tools · 3 resources · 1 prompt"] --> A
+    end
+    subgraph Application["LeaveLite.Application"]
+        A["CQRS handlers<br/>(validate → load → execute → persist → dispatch)"]
+    end
+    subgraph Domain["LeaveLite.Domain"]
+        E["Employee · AccrualPolicy<br/>LeaveRequest state machine"] 
+        AC["Accrual engine (pure)"]
+        SP["Specifications<br/>(eligibility · staffing)"]
+    end
+    A --> E
+    A --> AC
+    A --> SP
+    E -->|"domain events"| CH["Bounded channel"] --> W["LowBalanceAlertWorker"]
+    A --> P["EF Core 10 + SQLite"]
+```
 
 ### The domain in one paragraph
 
