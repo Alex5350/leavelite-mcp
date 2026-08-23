@@ -3,5 +3,6 @@
     <Project Path="src/LeaveLite.Application/LeaveLite.Application.csproj" />
     <Project Path="src/LeaveLite.Domain/LeaveLite.Domain.csproj" />
     <Project Path="src/LeaveLite.Infrastructure/LeaveLite.Infrastructure.csproj" />
+    <Project Path="src/LeaveLite.Server/LeaveLite.Server.csproj" />
   </Folder>
 </Solution>
