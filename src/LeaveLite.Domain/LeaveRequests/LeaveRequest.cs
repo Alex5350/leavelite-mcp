@@ -15,6 +15,18 @@ public sealed class LeaveRequest : Entity<LeaveRequestId>
 {
     private const int ReasonMaxLength = 2000;
 
+    /// <summary>
+    /// Reconstitution-only constructor for persistence layers (EF Core): ORM materialization
+    /// cannot route the <see cref="DateRange"/> value object through the rich constructor.
+    /// Business code must always use <see cref="Create"/>.
+    /// </summary>
+#pragma warning disable CS8618 // EF populates members through their backing fields on materialization.
+    private LeaveRequest()
+        : base(default)
+    {
+    }
+#pragma warning restore CS8618
+
     private LeaveRequest(
         LeaveRequestId id,
         EmployeeId employeeId,

@@ -2,5 +2,6 @@
   <Folder Name="/src/">
     <Project Path="src/LeaveLite.Application/LeaveLite.Application.csproj" />
     <Project Path="src/LeaveLite.Domain/LeaveLite.Domain.csproj" />
+    <Project Path="src/LeaveLite.Infrastructure/LeaveLite.Infrastructure.csproj" />
   </Folder>
 </Solution>
