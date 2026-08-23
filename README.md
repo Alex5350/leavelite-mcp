@@ -1,11 +1,12 @@
-# LeaveLite
+# LeaveLite MCP
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-10/overview)
 [![C#](https://img.shields.io/badge/C%23-14-239120)](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14)
 [![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-191919)](https://modelcontextprotocol.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A **leave / PTO management server for the Model Context Protocol**: an AI assistant that
+**LeaveLite MCP** is a **leave / PTO management server for the Model Context Protocol**: an AI
+assistant that
 speaks MCP - Claude Desktop, Claude Code, IDE agents - can check an employee's balance,
 book leave, run the manager approval workflow and review team coverage through it.
 
