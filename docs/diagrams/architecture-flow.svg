@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-label="LeaveLite MCP architecture - animated tool-call flow">
+  <defs>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#1B2737"/>
+    </pattern>
+  </defs>
+  <style>
+    .t-title { font: 600 20px ui-sans-serif, system-ui, sans-serif; fill: #E2E8F0; }
+    .t-sub   { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #64748B; }
+    .t-node  { font: 600 14px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #E2E8F0; letter-spacing: .5px; }
+    .t-body  { font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #94A3B8; }
+    .t-mut   { font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #64748B; }
+    .t-chip  { font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #34D399; }
+    .edge   { stroke: #1F2B3D; stroke-width: 1.5; fill: none; }
+    .flowG  { stroke: #34D399; stroke-width: 1.5; fill: none; stroke-dasharray: 5 11; opacity: .8; animation: dashE 1.4s linear infinite; }
+    .flowB  { stroke: #38BDF8; stroke-width: 1.5; fill: none; stroke-dasharray: 5 11; opacity: .5; animation: dashW 1.6s linear infinite; }
+    .flowA  { stroke: #F59E0B; stroke-width: 1.5; fill: none; stroke-dasharray: 4 10; opacity: .7; animation: dashS 1.2s linear infinite; }
+    .node   { fill: #0E1620; stroke: #22304A; stroke-width: 1.2; }
+    @keyframes dashE { to { stroke-dashoffset: -16; } }
+    @keyframes dashW { to { stroke-dashoffset: 16; } }
+    @keyframes dashS { to { stroke-dashoffset: -14; } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+
+  <rect width="1200" height="560" fill="#0B1118"/>
+  <rect width="1200" height="560" fill="url(#dots)" opacity=".5"/>
+
+  <text x="40" y="46" class="t-title">LeaveLite - MCP architecture</text>
+  <text x="40" y="68" class="t-sub">how a tool call flows · request in emerald · response in sky · domain events in amber</text>
+  <rect x="1024" y="30" width="136" height="26" rx="13" fill="none" stroke="#34D399" stroke-opacity=".55"/>
+  <text x="1092" y="47" class="t-chip" text-anchor="middle">protocol · MCP</text>
+
+  <!-- edges (base + animated overlay) -->
+  <path class="edge"  d="M230,270 H300"/>
+  <path class="flowG" d="M230,270 H300"/>
+  <text x="265" y="258" class="t-mut" text-anchor="middle">Streamable HTTP /mcp</text>
+
+  <path class="edge"  d="M530,270 H600"/>
+  <path class="flowG" d="M530,270 H600"/>
+  <text x="565" y="258" class="t-mut" text-anchor="middle">handler call</text>
+
+  <path class="edge"  d="M810,270 H880"/>
+  <path class="flowG" d="M810,270 H880"/>
+  <text x="845" y="258" class="t-mut" text-anchor="middle">domain rules</text>
+
+  <path class="edge"  d="M705,350 V420"/>
+  <path class="flowG" d="M705,350 V420"/>
+  <text x="715" y="392" class="t-mut">EF Core · SQL</text>
+
+  <path class="edge"  d="M1020,280 V420"/>
+  <path class="flowA" d="M1020,280 V420"/>
+  <text x="1030" y="356" class="t-mut" fill="#B45309">domain events</text>
+  <path class="edge"  d="M880,470 H810"/>
+  <path class="flowB" d="M880,470 H810" opacity=".35"/>
+
+  <!-- nodes -->
+  <g>
+    <rect class="node" x="40" y="210" width="190" height="120" rx="12">
+      <animate attributeName="stroke-opacity" values="1;.45;1" dur="3.2s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="40" y="210" width="4" height="120" rx="2" fill="#34D399" opacity=".85"/>
+    <text x="62" y="242" class="t-node">MCP CLIENT</text>
+    <text x="62" y="268" class="t-body">Claude Desktop</text>
+    <text x="62" y="286" class="t-body">Claude Code · Inspector</text>
+    <text x="62" y="310" class="t-mut">tools/call · resources/read</text>
+  </g>
+
+  <g>
+    <rect class="node" x="300" y="190" width="230" height="160" rx="12">
+      <animate attributeName="stroke-opacity" values="1;.45;1" dur="3.2s" begin=".4s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="300" y="190" width="4" height="160" rx="2" fill="#38BDF8" opacity=".85"/>
+    <text x="322" y="222" class="t-node">LEAVELITE.SERVER</text>
+    <text x="322" y="244" class="t-body">ASP.NET Core host</text>
+    <rect x="322" y="258" width="70" height="20" rx="10" fill="none" stroke="#22304A"/>
+    <text x="357" y="272" class="t-mut" text-anchor="middle">10 tools</text>
+    <rect x="398" y="258" width="86" height="20" rx="10" fill="none" stroke="#22304A"/>
+    <text x="441" y="272" class="t-mut" text-anchor="middle">3 resources</text>
+    <rect x="322" y="284" width="70" height="20" rx="10" fill="none" stroke="#22304A"/>
+    <text x="357" y="298" class="t-mut" text-anchor="middle">1 prompt</text>
+    <text x="322" y="330" class="t-mut">ModelContextProtocol SDK 2.2</text>
+  </g>
+
+  <g>
+    <rect class="node" x="600" y="190" width="210" height="160" rx="12">
+      <animate attributeName="stroke-opacity" values="1;.45;1" dur="3.2s" begin=".8s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="600" y="190" width="4" height="160" rx="2" fill="#34D399" opacity=".85"/>
+    <text x="622" y="222" class="t-node">APPLICATION</text>
+    <text x="622" y="244" class="t-body">CQRS handlers</text>
+    <text x="622" y="266" class="t-body">validate → execute</text>
+    <text x="622" y="284" class="t-body">persist → dispatch</text>
+    <text x="622" y="316" class="t-mut">ErrorOr results · FluentValidation</text>
+  </g>
+
+  <g>
+    <rect class="node" x="880" y="90" width="280" height="190" rx="12">
+      <animate attributeName="stroke-opacity" values="1;.45;1" dur="3.2s" begin="1.2s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="880" y="90" width="4" height="190" rx="2" fill="#F59E0B" opacity=".85"/>
+    <text x="902" y="122" class="t-node">DOMAIN</text>
+    <text x="902" y="148" class="t-body">LeaveRequest state machine</text>
+    <text x="902" y="170" class="t-body">pure accrual engine</text>
+    <text x="902" y="192" class="t-body">specifications</text>
+    <text x="902" y="214" class="t-body">holiday-aware working days</text>
+    <text x="902" y="252" class="t-mut">typed errors · domain events</text>
+  </g>
+
+  <g>
+    <rect class="node" x="600" y="420" width="210" height="100" rx="12"/>
+    <rect x="600" y="420" width="4" height="100" rx="2" fill="#64748B" opacity=".85"/>
+    <text x="622" y="452" class="t-node">INFRASTRUCTURE</text>
+    <text x="622" y="476" class="t-body">EF Core 10 · SQLite</text>
+    <text x="622" y="496" class="t-mut">migrations · seeded demo org</text>
+  </g>
+
+  <g>
+    <rect class="node" x="880" y="420" width="280" height="100" rx="12"/>
+    <rect x="880" y="420" width="4" height="100" rx="2" fill="#F59E0B" opacity=".85"/>
+    <text x="902" y="452" class="t-node" fill="#FBBF24">LOW-BALANCE ALERT WORKER</text>
+    <text x="902" y="476" class="t-body">bounded channel · background service</text>
+    <text x="902" y="496" class="t-mut">drop-write under pressure</text>
+  </g>
+
+  <!-- traveling packets: request emerald out, response sky back, event amber down -->
+  <circle r="5" fill="#34D399" stroke="#0B1118" stroke-width="1.5">
+    <animateMotion dur="8s" repeatCount="indefinite" calcMode="linear"
+      path="M230,270 L300,270" keyPoints="0;0;1;1" keyTimes="0;0.02;0.10;1"/>
+  </circle>
+  <circle r="5" fill="#34D399" stroke="#0B1118" stroke-width="1.5">
+    <animateMotion dur="8s" repeatCount="indefinite" calcMode="linear"
+      path="M530,270 L600,270" keyPoints="0;0;1;1" keyTimes="0;0.12;0.20;1"/>
+  </circle>
+  <circle r="5" fill="#34D399" stroke="#0B1118" stroke-width="1.5">
+    <animateMotion dur="8s" repeatCount="indefinite" calcMode="linear"
+      path="M810,270 L880,270" keyPoints="0;0;1;1" keyTimes="0;0.22;0.30;1"/>
+  </circle>
+  <circle r="5" fill="#38BDF8" stroke="#0B1118" stroke-width="1.5">
+    <animateMotion dur="8s" repeatCount="indefinite" calcMode="linear"
+      path="M880,270 L810,270" keyPoints="0;0;1;1" keyTimes="0;0.42;0.50;1"/>
+  </circle>
+  <circle r="5" fill="#38BDF8" stroke="#0B1118" stroke-width="1.5">
+    <animateMotion dur="8s" repeatCount="indefinite" calcMode="linear"
+      path="M600,270 L530,270" keyPoints="0;0;1;1" keyTimes="0;0.52;0.60;1"/>
+  </circle>
+  <circle r="5" fill="#38BDF8" stroke="#0B1118" stroke-width="1.5">
+    <animateMotion dur="8s" repeatCount="indefinite" calcMode="linear"
+      path="M300,270 L230,270" keyPoints="0;0;1;1" keyTimes="0;0.62;0.70;1"/>
+  </circle>
+  <circle r="4" fill="#F59E0B" stroke="#0B1118" stroke-width="1.5">
+    <animateMotion dur="8s" repeatCount="indefinite" calcMode="linear"
+      path="M1020,280 L1020,420" keyPoints="0;0;1;1" keyTimes="0;0.74;0.84;1"/>
+  </circle>
+
+  <!-- legend -->
+  <circle cx="46" cy="545" r="4" fill="#34D399"/><text x="56" y="549" class="t-mut">request</text>
+  <circle cx="126" cy="545" r="4" fill="#38BDF8"/><text x="136" y="549" class="t-mut">response</text>
+  <circle cx="216" cy="545" r="4" fill="#F59E0B"/><text x="226" y="549" class="t-mut">domain events</text>
+  <text x="1160" y="549" class="t-mut" text-anchor="end">verified by 27 protocol tests</text>
+</svg>

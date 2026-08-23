@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="330" viewBox="0 0 900 330" role="img" aria-label="LeaveRequest lifecycle - animated state machine">
+  <defs>
+    <pattern id="dots2" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#1B2737"/>
+    </pattern>
+  </defs>
+  <style>
+    .l-title { font: 600 18px ui-sans-serif, system-ui, sans-serif; fill: #E2E8F0; }
+    .l-sub   { font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #64748B; }
+    .l-node  { font: 600 13px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #E2E8F0; letter-spacing: .5px; }
+    .l-body  { font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #94A3B8; }
+    .l-mut   { font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #64748B; }
+    .edge   { stroke: #1F2B3D; stroke-width: 1.5; fill: none; }
+    .flowG  { stroke: #34D399; stroke-width: 1.5; fill: none; stroke-dasharray: 5 11; opacity: .8; animation: dE 1.4s linear infinite; }
+    .flowR  { stroke: #F87171; stroke-width: 1.5; fill: none; stroke-dasharray: 5 11; opacity: .55; animation: dE 1.6s linear infinite; }
+    .flowA  { stroke: #F59E0B; stroke-width: 1.5; fill: none; stroke-dasharray: 5 11; opacity: .55; animation: dE 1.5s linear infinite; }
+    .node   { fill: #0E1620; stroke: #22304A; stroke-width: 1.2; }
+    @keyframes dE { to { stroke-dashoffset: -16; } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+
+  <rect width="900" height="330" fill="#0B1118"/>
+  <rect width="900" height="330" fill="url(#dots2)" opacity=".5"/>
+  <text x="36" y="42" class="l-title">LeaveRequest lifecycle</text>
+  <text x="36" y="62" class="l-sub">animated approval path in emerald · every illegal transition returns a typed domain error</text>
+
+  <!-- edges -->
+  <path class="edge"  d="M212,165 H370"/>
+  <path class="flowG" d="M212,165 H370"/>
+  <text x="291" y="150" class="l-mut" text-anchor="middle">approve</text>
+  <text x="291" y="188" class="l-mut" text-anchor="middle" fill="#475569">manager authority · min staffing</text>
+
+  <path class="edge"  d="M212,140 C290,140 300,80 370,80"/>
+  <path class="flowR" d="M212,140 C290,140 300,80 370,80"/>
+  <text x="268" y="86" class="l-mut" text-anchor="middle">deny · reason required</text>
+
+  <path class="edge"  d="M212,190 C290,190 300,250 370,250"/>
+  <path class="flowA" d="M212,190 C290,190 300,250 370,250"/>
+  <text x="262" y="242" class="l-mut" text-anchor="middle">cancel</text>
+  <text x="262" y="258" class="l-mut" text-anchor="middle" fill="#475569">owner · before start</text>
+
+  <!-- nodes -->
+  <g>
+    <rect class="node" x="40" y="130" width="172" height="70" rx="12">
+      <animate attributeName="stroke-opacity" values="1;.45;1" dur="3s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="40" y="130" width="4" height="70" rx="2" fill="#34D399" opacity=".85"/>
+    <text x="62" y="158" class="l-node">PENDING</text>
+    <text x="62" y="180" class="l-body">guards: overlap · balance</text>
+  </g>
+  <g>
+    <rect class="node" x="370" y="130" width="172" height="70" rx="12">
+      <animate attributeName="stroke-opacity" values="1;.45;1" dur="3s" begin=".5s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="370" y="130" width="4" height="70" rx="2" fill="#34D399" opacity=".85"/>
+    <text x="392" y="158" class="l-node">APPROVED</text>
+    <text x="392" y="180" class="l-body">balance consumed</text>
+  </g>
+  <g>
+    <rect class="node" x="370" y="45" width="172" height="70" rx="12"/>
+    <rect x="370" y="45" width="4" height="70" rx="2" fill="#F87171" opacity=".7"/>
+    <text x="392" y="73" class="l-node">DENIED</text>
+    <text x="392" y="95" class="l-body">terminal</text>
+  </g>
+  <g>
+    <rect class="node" x="370" y="215" width="172" height="70" rx="12"/>
+    <rect x="370" y="215" width="4" height="70" rx="2" fill="#F59E0B" opacity=".7"/>
+    <text x="392" y="243" class="l-node">CANCELLED</text>
+    <text x="392" y="265" class="l-body">terminal · refund</text>
+  </g>
+
+  <!-- outcome chips -->
+  <g>
+    <rect x="620" y="140" width="244" height="54" rx="10" fill="none" stroke="#22304A"/>
+    <text x="636" y="162" class="l-body" fill="#34D399">LeaveRequestApprovedDomainEvent</text>
+    <text x="636" y="180" class="l-mut">dispatched after save · LowBalance check</text>
+  </g>
+  <path class="edge" d="M542,165 H620"/>
+  <circle r="4" fill="#34D399" stroke="#0B1118" stroke-width="1.5">
+    <animateMotion dur="6s" repeatCount="indefinite" calcMode="linear"
+      path="M212,165 L370,165" keyPoints="0;0;1;1" keyTimes="0;0.05;0.35;1"/>
+  </circle>
+  <circle r="4" fill="#34D399" stroke="#0B1118" stroke-width="1.5">
+    <animateMotion dur="6s" repeatCount="indefinite" calcMode="linear"
+      path="M370,165 L542,165 L620,165" keyPoints="0;0;1;1" keyTimes="0;0.45;0.75;1"/>
+  </circle>
+</svg>

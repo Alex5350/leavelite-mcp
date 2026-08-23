@@ -28,6 +28,12 @@ Captured live from Anthropic's [MCP Inspector](https://modelcontextprotocol.io/d
 connected to this server: the full tool catalog with LLM-facing descriptions, and a real
 `check_employee_balance` execution returning Ada's computed balance.
 
+![Animated architecture - how a tool call flows](docs/diagrams/architecture-flow.svg)
+
+*Animated: the emerald request travels client → MCP host → handler → domain, the sky
+response returns, and amber domain events feed the alert worker. Animations play directly
+on GitHub.*
+
 ## What it exposes
 
 | | Name | Purpose |
@@ -131,26 +137,10 @@ and protocol-level testing. The build order lives in [docs/process.md](docs/proc
 
 ### How a tool call flows
 
-```mermaid
-flowchart LR
-    C["MCP client<br/>(Claude Desktop · Inspector)"] -->|"Streamable HTTP - JSON-RPC"| H
-    subgraph Server["LeaveLite.Server (ASP.NET Core)"]
-        H["MCP host<br/>10 tools · 3 resources · 1 prompt"] --> A
-    end
-    subgraph Application["LeaveLite.Application"]
-        A["CQRS handlers<br/>(validate → load → execute → persist → dispatch)"]
-    end
-    subgraph Domain["LeaveLite.Domain"]
-        E["Employee · AccrualPolicy<br/>LeaveRequest state machine"] 
-        AC["Accrual engine (pure)"]
-        SP["Specifications<br/>(eligibility · staffing)"]
-    end
-    A --> E
-    A --> AC
-    A --> SP
-    E -->|"domain events"| CH["Bounded channel"] --> W["LowBalanceAlertWorker"]
-    A --> P["EF Core 10 + SQLite"]
-```
+The animated diagram near the top of this page traces the full path: MCP client →
+Streamable HTTP `/mcp` → tool adapter → CQRS handler → domain rules → EF Core/SQLite,
+with the domain-event channel feeding the low-balance alert worker. Every element in it
+maps to a real type in the solution.
 
 ### The domain in one paragraph
 
@@ -161,6 +151,10 @@ consume balance. `LeaveRequest` is a state machine (Pending → Approved/Denied/
 whose transitions are illegal-transition-proof. Approval requires a same-team manager and
 a `MinimumStaffingSpecification` check against the rest of the team's approved leave.
 Every mutation runs through CQRS handlers returning typed `ErrorOr` results.
+
+### The leave-request lifecycle
+
+![Animated LeaveRequest lifecycle](docs/diagrams/request-lifecycle.svg)
 
 ## Challenges worth reading
 
