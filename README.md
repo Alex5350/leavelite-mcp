@@ -7,29 +7,29 @@
 
 **LeaveLite MCP** is a **leave / PTO management server for the Model Context Protocol**: an AI
 assistant that
-speaks MCP - Claude Desktop, Claude Code, IDE agents - can check an employee's balance,
+speaks MCP (Claude Desktop, Claude Code, IDE agents) can check an employee's balance,
 book leave, run the manager approval workflow and review team coverage through it.
 
 Built with the **official MCP C# SDK** ([`ModelContextProtocol`](https://www.nuget.org/packages/ModelContextProtocol/),
 co-maintained by Microsoft and Anthropic) on ASP.NET Core, wrapped in Clean Architecture
 with a pure, fully-tested accrual domain. Not a calculator demo: the domain carries the
-rules a real HR system fights about - tenure gates, carry-over caps, holiday-aware
+rules a real HR system fights about: tenure gates, carry-over caps, holiday-aware
 consumption, approval authority and minimum team staffing.
 
-> This is a personal reference application - a deliberate exercise in exposing a serious
+> This is a personal reference application, a deliberate exercise in exposing a serious
 > DDD backend to AI clients through MCP. It pairs with
 > [LedgerLite](https://github.com/Alex5350/ledgerlite) (REST API) and
 > [LedgerLite Web](https://github.com/Alex5350/ledgerlite-web) (Blazor) as a set.
 
-| MCP Inspector - the tool catalog | MCP Inspector - a live tool call |
+| MCP Inspector: the tool catalog | MCP Inspector: a live tool call |
 |:---:|:---:|
-| ![Tools](docs/screenshots/inspector-tools.png) | ![Tool run](docs/screenshots/inspector-tool-run.png) |
+| ![Tools](docs/screenshots/shot-inspector-tools.png) | ![Tool run](docs/screenshots/shot-inspector-tool-run.png) |
 
 Captured live from Anthropic's [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector)
 connected to this server: the full tool catalog with LLM-facing descriptions, and a real
 `check_employee_balance` execution returning Ada's computed balance.
 
-![Animated architecture - how a tool call flows](docs/diagrams/architecture-flow.svg)
+![Animated architecture: how a tool call flows](docs/diagrams/architecture-flow.svg)
 
 *Animated: the emerald request travels client → MCP host → handler → domain, the sky
 response returns, and amber domain events feed the alert worker. Animations play directly
@@ -51,9 +51,9 @@ on GitHub.*
 | Resource | `leavelite://policies`, `leavelite://teams`, `leavelite://holidays/{year}` | Reference data for client context |
 | Prompt | `team-coverage-review` | Instructs an AI to audit coverage for a month using the tools |
 
-Every failure surfaces as readable text carrying a **stable domain error code** -
-`[LeaveRequest.OverlappingRequest]`, `[Employee.ApproverNotTeamManager]`,
-`[LeaveRequest.MinimumStaffingNotMet]` - so an AI client can explain *why* an action failed.
+Every failure surfaces as readable text carrying a **stable domain error code**
+(`[LeaveRequest.OverlappingRequest]`, `[Employee.ApproverNotTeamManager]`,
+`[LeaveRequest.MinimumStaffingNotMet]`) so an AI client can explain *why* an action failed.
 
 ## Getting started
 
@@ -72,7 +72,7 @@ sample requests dated relative to *run time* so the demo never goes stale.
 
 ### Connect an MCP client
 
-**Claude Desktop / Claude Code** - add to the MCP configuration:
+**Claude Desktop / Claude Code**: add to the MCP configuration:
 
 ```json
 {
@@ -88,7 +88,7 @@ sample requests dated relative to *run time* so the demo never goes stale.
 Then ask: *"Check Ada's vacation balance and forecast it three months out"* or
 *"Show Bruno's pending request and approve it if the team calendar holds up."*
 
-**MCP Inspector** (Anthropic's interactive tooling) - the screenshots above were captured with it:
+**MCP Inspector** (Anthropic's interactive tooling): the screenshots above were captured with it:
 
 ```bash
 npx @modelcontextprotocol/inspector@latest
@@ -96,7 +96,7 @@ npx @modelcontextprotocol/inspector@latest
 
 Then add a server with URL `http://localhost:5020/mcp` (Streamable HTTP) and connect.
 
-**Raw protocol** - stateless Streamable HTTP; this is a real response from the running server:
+**Raw protocol**: stateless Streamable HTTP; this is a real response from the running server:
 
 ```bash
 curl -s http://localhost:5020/mcp \
@@ -125,13 +125,13 @@ src/
 ├── LeaveLite.Infrastructure/    # EF Core 10 + SQLite, migrations, event channel worker
 └── LeaveLite.Server/            # MCP host: tools/resources/prompts over /mcp
 tests/
-├── LeaveLite.Domain.UnitTests/          # 166 tests - accrual math in depth
-├── LeaveLite.Application.UnitTests/     # 60 tests - every use case, every branch
-└── LeaveLite.Server.Tests/              # 27 tests - the official MCP client speaking
+├── LeaveLite.Domain.UnitTests/          # 166 tests: accrual math in depth
+├── LeaveLite.Application.UnitTests/     # 60 tests: every use case, every branch
+└── LeaveLite.Server.Tests/              # 27 tests: the official MCP client speaking
                                          #   the real protocol against the real host
 ```
 
-Every architectural decision - and the challenges each one surfaced - is recorded in
+Every architectural decision (and the challenges each one surfaced) is recorded in
 [docs/adr/](docs/adr/): clean architecture, the SDK/transport choice, persistence, CQRS
 without a mediator, accrual purity, error surfacing, domain events over a bounded channel,
 and protocol-level testing. The build order lives in [docs/process.md](docs/process.md).
@@ -147,7 +147,7 @@ maps to a real type in the solution.
 
 Balances are computed, not stored: a pure accrual engine derives accrued hours from the
 policy (tenure-gated monthly fractions or upfront grants, annual caps) and subtracts
-approved leave measured in **working days** - weekends and organization holidays never
+approved leave measured in **working days**: weekends and organization holidays never
 consume balance. `LeaveRequest` is a state machine (Pending → Approved/Denied/Cancelled)
 whose transitions are illegal-transition-proof. Approval requires a same-team manager and
 a `MinimumStaffingSpecification` check against the rest of the team's approved leave.
@@ -161,20 +161,20 @@ Every mutation runs through CQRS handlers returning typed `ErrorOr` results.
 
 These came up during the build and are documented with their resolutions in the ADRs:
 
-- **EF Core × rich constructors** - complex properties (`DateRange`) cannot be
+- **EF Core × rich constructors**: complex properties (`DateRange`) cannot be
   constructor-bound into aggregate constructors; aggregates carry private reconstitution
   constructors while factories remain the only business path.
-- **Stateless HTTP vs. sessions** - stateless Streamable HTTP trades server affinity for
+- **Stateless HTTP vs. sessions**: stateless Streamable HTTP trades server affinity for
   trivial load balancing and simpler tests; the SDK's session semantics are available when
   needed.
-- **Static tool classes** - the SDK's `WithTools<T>()` rejects static classes; assembly
+- **Static tool classes**: the SDK's `WithTools<T>()` rejects static classes; assembly
   scanning is the supported discovery route.
-- **Testing the transport, not the implementation** - the protocol suite connects the real
+- **Testing the transport, not the implementation**: the protocol suite connects the real
   SDK client through `WebApplicationFactory`'s in-memory server by injecting the factory's
   `HttpClient` into the transport (an API detail discovered against SDK 2.2.0).
-- **Time correctness** - every clock read flows through `IDateTimeProvider`; the accrual
+- **Time correctness**: every clock read flows through `IDateTimeProvider`; the accrual
   engine takes `asOf` as a parameter, making the riskiest math pure and deterministic.
-- **Error vocabulary for LLMs** - stable machine-readable codes paired with human-readable
+- **Error vocabulary for LLMs**: stable machine-readable codes paired with human-readable
   sentences, because an AI client must explain failures it didn't expect.
 
 ## Testing
@@ -185,7 +185,7 @@ dotnet test        # 253 tests, no setup required
 
 The protocol suite is the differentiator: 27 tests perform the initialize handshake,
 discover tools/resources/prompts, run the full request → approve → balance-reduced write
-flow, and assert domain error codes through tool results - the exact experience a Claude
+flow, and assert domain error codes through tool results, the exact experience a Claude
 client gets.
 
 ## Tech stack
