@@ -81,11 +81,13 @@ sample requests dated relative to *run time* so the demo never goes stale.
 Then ask: *"Check Ada's vacation balance and forecast it three months out"* or
 *"Show Bruno's pending request and approve it if the team calendar holds up."*
 
-**MCP Inspector** (Anthropic's interactive tooling):
+**MCP Inspector** (Anthropic's interactive tooling) - the screenshots above were captured with it:
 
 ```bash
-npx @modelcontextprotocol/inspector dotnet run --project src/LeaveLite.Server
+npx @modelcontextprotocol/inspector@latest
 ```
+
+Then add a server with URL `http://localhost:5020/mcp` (Streamable HTTP) and connect.
 
 **Raw protocol** - stateless Streamable HTTP; this is a real response from the running server:
 
