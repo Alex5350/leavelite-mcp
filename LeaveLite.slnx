@@ -5,4 +5,8 @@
     <Project Path="src/LeaveLite.Infrastructure/LeaveLite.Infrastructure.csproj" />
     <Project Path="src/LeaveLite.Server/LeaveLite.Server.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/LeaveLite.Application.UnitTests/LeaveLite.Application.UnitTests.csproj" />
+    <Project Path="tests/LeaveLite.Domain.UnitTests/LeaveLite.Domain.UnitTests.csproj" />
+  </Folder>
 </Solution>
