@@ -8,5 +8,6 @@
   <Folder Name="/tests/">
     <Project Path="tests/LeaveLite.Application.UnitTests/LeaveLite.Application.UnitTests.csproj" />
     <Project Path="tests/LeaveLite.Domain.UnitTests/LeaveLite.Domain.UnitTests.csproj" />
+    <Project Path="tests/LeaveLite.Server.Tests/LeaveLite.Server.Tests.csproj" />
   </Folder>
 </Solution>
