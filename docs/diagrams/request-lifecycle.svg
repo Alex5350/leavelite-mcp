@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="330" viewBox="0 0 900 330" role="img" aria-label="LeaveRequest lifecycle - animated state machine">
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="330" viewBox="0 0 900 330" role="img" aria-label="LeaveRequest lifecycle: animated state machine">
   <defs>
     <pattern id="dots2" width="24" height="24" patternUnits="userSpaceOnUse">
       <circle cx="1" cy="1" r="1" fill="#1B2737"/>
@@ -41,29 +41,27 @@
 
   <!-- nodes -->
   <g>
-    <rect class="node" x="40" y="130" width="172" height="70" rx="12">
-      <animate attributeName="stroke-opacity" values="1;.45;1" dur="3s" repeatCount="indefinite"/>
+    <rect class="node pulse" x="40" y="130" width="172" height="70" rx="12">
     </rect>
     <rect x="40" y="130" width="4" height="70" rx="2" fill="#34D399" opacity=".85"/>
     <text x="62" y="158" class="l-node">PENDING</text>
     <text x="62" y="180" class="l-body">guards: overlap · balance</text>
   </g>
   <g>
-    <rect class="node" x="370" y="130" width="172" height="70" rx="12">
-      <animate attributeName="stroke-opacity" values="1;.45;1" dur="3s" begin=".5s" repeatCount="indefinite"/>
+    <rect class="node pulse" x="370" y="130" width="172" height="70" rx="12">
     </rect>
     <rect x="370" y="130" width="4" height="70" rx="2" fill="#34D399" opacity=".85"/>
     <text x="392" y="158" class="l-node">APPROVED</text>
     <text x="392" y="180" class="l-body">balance consumed</text>
   </g>
   <g>
-    <rect class="node" x="370" y="45" width="172" height="70" rx="12"/>
+    <rect class="node pulse" x="370" y="45" width="172" height="70" rx="12"/>
     <rect x="370" y="45" width="4" height="70" rx="2" fill="#F87171" opacity=".7"/>
     <text x="392" y="73" class="l-node">DENIED</text>
     <text x="392" y="95" class="l-body">terminal</text>
   </g>
   <g>
-    <rect class="node" x="370" y="215" width="172" height="70" rx="12"/>
+    <rect class="node pulse" x="370" y="215" width="172" height="70" rx="12"/>
     <rect x="370" y="215" width="4" height="70" rx="2" fill="#F59E0B" opacity=".7"/>
     <text x="392" y="243" class="l-node">CANCELLED</text>
     <text x="392" y="265" class="l-body">terminal · refund</text>
@@ -77,11 +75,7 @@
   </g>
   <path class="edge" d="M542,165 H620"/>
   <circle r="4" fill="#34D399" stroke="#0B1118" stroke-width="1.5">
-    <animateMotion dur="6s" repeatCount="indefinite" calcMode="linear"
-      path="M212,165 L370,165" keyPoints="0;0;1;1" keyTimes="0;0.05;0.35;1"/>
   </circle>
   <circle r="4" fill="#34D399" stroke="#0B1118" stroke-width="1.5">
-    <animateMotion dur="6s" repeatCount="indefinite" calcMode="linear"
-      path="M370,165 L542,165 L620,165" keyPoints="0;0;1;1" keyTimes="0;0.45;0.75;1"/>
   </circle>
 </svg>
