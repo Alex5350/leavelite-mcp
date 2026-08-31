@@ -3,59 +3,104 @@
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-10/overview)
 [![C#](https://img.shields.io/badge/C%23-14-239120)](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14)
 [![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-191919)](https://modelcontextprotocol.io)
+[![CI](https://github.com/Alex5350/leavelite-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Alex5350/leavelite-mcp/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**LeaveLite MCP** is a **leave / PTO management server for the Model Context Protocol**: an AI
-assistant that
-speaks MCP (Claude Desktop, Claude Code, IDE agents) can check an employee's balance,
-book leave, run the manager approval workflow and review team coverage through it.
+**Let your team's AI assistant answer leave questions and book time off, with the rules a real
+HR system fights about.**
 
-Built with the **official MCP C# SDK** ([`ModelContextProtocol`](https://www.nuget.org/packages/ModelContextProtocol/),
-co-maintained by Microsoft and Anthropic) on ASP.NET Core, wrapped in Clean Architecture
-with a pure, fully-tested accrual domain. Not a calculator demo: the domain carries the
-rules a real HR system fights about: tenure gates, carry-over caps, holiday-aware
-consumption, approval authority and minimum team staffing.
+> **Two ways to read this page.** Not an engineer? Everything below the pictures stays in plain
+> language, and jargon links to the [glossary](docs/GLOSSARY.md). Engineer? The deep dive lives
+> in [TECHNICAL.md](TECHNICAL.md): architecture, request flow, the full tool catalog, and every
+> major decision mapped back to the business problem it solves.
 
-> This is a personal reference application, a deliberate exercise in exposing a serious
-> DDD backend to AI clients through MCP. It pairs with
-> [LedgerLite](https://github.com/Alex5350/ledgerlite) (REST API) and
-> [LedgerLite Web](https://github.com/Alex5350/ledgerlite-web) (Blazor) as a set.
+## The problem
+
+Leave balances and policies live in HR portals nobody checks conversationally. A manager planning
+next week's staffing plans blind: "who's off next Friday?" should be one question, not five
+dashboard visits and a spreadsheet cross-check. And booking leave means re-keying rules the HR
+system already knows: tenure gates before anyone accrues, carry-over caps at the year boundary,
+holidays that must not consume balance, minimum staffing, and who actually has the authority to
+approve.
+
+LeaveLite MCP puts the leave system where the team already works: the chat with the AI assistant.
+Questions get answered from the real data, and bookings run through the real rules on the server,
+where they cannot be misremembered or talked around.
+
+## The product in pictures
+
+<p align="center">
+  <img src="docs/diagrams/conversation.svg"
+       alt="A manager and an AI assistant handling leave in conversation: a calendar question answered from the team calendar tool, a booking submitted to the approvals queue, and an overlapping request rejected with a readable error code"
+       width="100%">
+</p>
+
+*A mock conversation (the names match the seeded demo organization): the manager asks in plain
+words, each outlined chip is one tool call to the LeaveLite server, and every answer comes back
+grounded in the rules. Approval is still required, the balance is checked before anything is
+booked, and an overlap is rejected with a stable code the assistant can explain.*
+
+The two shots below are the developer view of the same thing, captured live from Anthropic's
+[MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector) connected to this server:
+the tool catalog with the descriptions AI clients read, and a real `check_employee_balance`
+execution returning Ada's computed balance.
 
 | MCP Inspector: the tool catalog | MCP Inspector: a live tool call |
 |:---:|:---:|
 | ![Tools](docs/screenshots/shot-inspector-tools.png) | ![Tool run](docs/screenshots/shot-inspector-tool-run.png) |
 
-Captured live from Anthropic's [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector)
-connected to this server: the full tool catalog with LLM-facing descriptions, and a real
-`check_employee_balance` execution returning Ada's computed balance.
+## What it delivers
 
-![Animated architecture: how a tool call flows](docs/diagrams/architecture-flow.svg)
+- **Balances and team calendars answerable in plain questions.** "Who's off next Friday?" or
+  "What will Carla's vacation balance be in December?" is answered from the same data and rules
+  the server enforces.
+- **Bookings that respect the rules a real HR system fights about.** [Tenure gates](docs/GLOSSARY.md),
+  [carry-over caps](docs/GLOSSARY.md), holiday-aware consumption,
+  [approval authority](docs/GLOSSARY.md) and [minimum staffing](docs/GLOSSARY.md): all enforced
+  server-side, before anything is written.
+- **Nothing becomes a booking without an approval.** Requests land in the team manager's queue;
+  approving consumes balance, and only a same-team manager can decide.
+- **Errors surface as readable results, not crashes.** Every failure carries a stable code such
+  as `[LeaveRequest.OverlappingRequest]` plus a plain sentence, so the assistant can explain why
+  an action was refused instead of guessing.
+- **Works with standard AI assistant clients.** Any client that speaks the
+  [Model Context Protocol](docs/GLOSSARY.md) (Claude Desktop, Claude Code, IDE agents) can
+  connect: one standard instead of one plugin per assistant.
 
-*Animated: the emerald request travels client → MCP host → handler → domain, the sky
-response returns, and amber domain events feed the alert worker. Animations play directly
-on GitHub.*
+A sample of what the assistant can call; the full catalog of 10 tools, 3 resources and 1 prompt
+is in [TECHNICAL.md](TECHNICAL.md#the-mcp-surface):
 
-## What it exposes
+| Tool | Purpose |
+|---|---|
+| `check_employee_balance` | Accrued, consumed and available hours per leave type |
+| `request_leave` | Submit a request, already checked for overlap and balance |
+| `list_pending_approvals` | A manager's queue with dates, hours and reasons |
+| `decide_leave_request` | Approve or deny, enforcing authority and minimum staffing |
+| `get_team_calendar` | Who is out, with holidays and working days, for any date window |
 
-| | Name | Purpose |
-|---|---|---|
-| Tool | `check_employee_balance` | Accrued / consumed / available hours per leave type |
-| Tool | `forecast_balance` | Balance now vs. projected N months ahead |
-| Tool | `request_leave` | Submit a leave request (overlap + balance guarded) |
-| Tool | `cancel_leave_request` | Cancel pending, or approved-before-it-starts |
-| Tool | `list_pending_approvals` | A manager's queue with hours and reasons |
-| Tool | `decide_leave_request` | Approve/deny with authority + minimum-staffing enforcement |
-| Tool | `get_team_calendar` | Who is out, holidays and working days per date |
-| Tool | `list_holidays` | The organization's holiday calendar |
-| Tool | `list_employees` / `who_reports_to_manager` | Directory data LLM callers need |
-| Resource | `leavelite://policies`, `leavelite://teams`, `leavelite://holidays/{year}` | Reference data for client context |
-| Prompt | `team-coverage-review` | Instructs an AI to audit coverage for a month using the tools |
+## How the engineering solves it
 
-Every failure surfaces as readable text carrying a **stable domain error code**
-(`[LeaveRequest.OverlappingRequest]`, `[Employee.ApproverNotTeamManager]`,
-`[LeaveRequest.MinimumStaffingNotMet]`) so an AI client can explain *why* an action failed.
+Plain-terms bridge; each item links to the full story in [TECHNICAL.md](TECHNICAL.md).
 
-## Getting started
+- **The assistant cannot "remember" the policy wrong.** The business rules live in the server,
+  not the model: every tool call runs the same domain rules any other interface would run, so a
+  booking is checked against the real policy, not the assistant's recollection of it.
+  ([how the tech solves the business problem](TECHNICAL.md#how-the-tech-solves-the-business-problem))
+- **Approvals cannot be talked around.** The approval workflow is enforced server-side: a
+  request moves from Pending to Approved only through a manager decision that re-checks authority
+  and minimum staffing, so no phrasing in the chat can skip the queue.
+  ([the leave-request lifecycle](TECHNICAL.md#request-and-data-flow))
+- **The balance math has to be exactly right, on any date.** Accrual is a deterministic
+  computation with the clock injected, so the same inputs always yield the same balance, and
+  "as of any date" is a parameter, not a guess.
+  ([the accrual engine](TECHNICAL.md#how-the-tech-solves-the-business-problem))
+- **"Works with the official client" has to be tested, not hoped.** The server is verified at the
+  protocol level with the official MCP client, the same path Claude Desktop takes, so the
+  handshake, discovery and write flows are known to work end to end.
+  ([testing](TECHNICAL.md#testing))
+
+<details>
+<summary><b>For developers: quickstart and connecting a client</b></summary>
 
 Requires the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0). Nothing else.
 
@@ -69,8 +114,6 @@ dotnet run --project src/LeaveLite.Server
 First run migrates SQLite and seeds a demo organization: five employees
 (`ada@leavelite.io` is the manager), three accrual policies, the 2026 holiday calendar and
 sample requests dated relative to *run time* so the demo never goes stale.
-
-### Connect an MCP client
 
 **Claude Desktop / Claude Code**: add to the MCP configuration:
 
@@ -88,7 +131,8 @@ sample requests dated relative to *run time* so the demo never goes stale.
 Then ask: *"Check Ada's vacation balance and forecast it three months out"* or
 *"Show Bruno's pending request and approve it if the team calendar holds up."*
 
-**MCP Inspector** (Anthropic's interactive tooling): the screenshots above were captured with it:
+**MCP Inspector** (Anthropic's interactive tooling): the developer-view screenshots above were
+captured with it:
 
 ```bash
 npx @modelcontextprotocol/inspector@latest
@@ -113,86 +157,26 @@ curl -s http://localhost:5020/mcp \
  "id":1,"jsonrpc":"2.0"}
 ```
 
-## Architecture
-
-```
-src/
-├── LeaveLite.Domain/            # Pure model: aggregates, value objects,
-│   ├── Balances/                #   AccrualBalanceCalculator (pure, deterministic)
-│   ├── Specifications/          #   Eligibility + minimum-staffing, combinable
-│   └── ...                      #   typed error catalog, domain events
-├── LeaveLite.Application/       # Use cases: CQRS handlers, ports, validation
-├── LeaveLite.Infrastructure/    # EF Core 10 + SQLite, migrations, event channel worker
-└── LeaveLite.Server/            # MCP host: tools/resources/prompts over /mcp
-tests/
-├── LeaveLite.Domain.UnitTests/          # 166 tests: accrual math in depth
-├── LeaveLite.Application.UnitTests/     # 60 tests: every use case, every branch
-└── LeaveLite.Server.Tests/              # 27 tests: the official MCP client speaking
-                                         #   the real protocol against the real host
-```
-
-Every architectural decision (and the challenges each one surfaced) is recorded in
-[docs/adr/](docs/adr/): clean architecture, the SDK/transport choice, persistence, CQRS
-without a mediator, accrual purity, error surfacing, domain events over a bounded channel,
-and protocol-level testing. The build order lives in [docs/process.md](docs/process.md).
-
-### How a tool call flows
-
-The animated diagram near the top of this page traces the full path: MCP client →
-Streamable HTTP `/mcp` → tool adapter → CQRS handler → domain rules → EF Core/SQLite,
-with the domain-event channel feeding the low-balance alert worker. Every element in it
-maps to a real type in the solution.
-
-### The domain in one paragraph
-
-Balances are computed, not stored: a pure accrual engine derives accrued hours from the
-policy (tenure-gated monthly fractions or upfront grants, annual caps) and subtracts
-approved leave measured in **working days**: weekends and organization holidays never
-consume balance. `LeaveRequest` is a state machine (Pending → Approved/Denied/Cancelled)
-whose transitions are illegal-transition-proof. Approval requires a same-team manager and
-a `MinimumStaffingSpecification` check against the rest of the team's approved leave.
-Every mutation runs through CQRS handlers returning typed `ErrorOr` results.
-
-### The leave-request lifecycle
-
-![Animated LeaveRequest lifecycle](docs/diagrams/request-lifecycle.svg)
-
-## Challenges worth reading
-
-These came up during the build and are documented with their resolutions in the ADRs:
-
-- **EF Core × rich constructors**: complex properties (`DateRange`) cannot be
-  constructor-bound into aggregate constructors; aggregates carry private reconstitution
-  constructors while factories remain the only business path.
-- **Stateless HTTP vs. sessions**: stateless Streamable HTTP trades server affinity for
-  trivial load balancing and simpler tests; the SDK's session semantics are available when
-  needed.
-- **Static tool classes**: the SDK's `WithTools<T>()` rejects static classes; assembly
-  scanning is the supported discovery route.
-- **Testing the transport, not the implementation**: the protocol suite connects the real
-  SDK client through `WebApplicationFactory`'s in-memory server by injecting the factory's
-  `HttpClient` into the transport (an API detail discovered against SDK 2.2.0).
-- **Time correctness**: every clock read flows through `IDateTimeProvider`; the accrual
-  engine takes `asOf` as a parameter, making the riskiest math pure and deterministic.
-- **Error vocabulary for LLMs**: stable machine-readable codes paired with human-readable
-  sentences, because an AI client must explain failures it didn't expect.
-
-## Testing
+Tests:
 
 ```bash
 dotnet test        # 253 tests, no setup required
 ```
 
-The protocol suite is the differentiator: 27 tests perform the initialize handshake,
-discover tools/resources/prompts, run the full request → approve → balance-reduced write
-flow, and assert domain error codes through tool results, the exact experience a Claude
-client gets.
+</details>
 
-## Tech stack
+## Documentation
 
-- .NET 10 / C# 14, ASP.NET Core
-- [ModelContextProtocol C# SDK 2.2.0](https://github.com/modelcontextprotocol/csharp-sdk) (Microsoft + Anthropic)
-- EF Core 10 + SQLite, ErrorOr, FluentValidation, NSubstitute, xUnit v3, Serilog
+| Document | What it covers | Audience |
+|---|---|---|
+| [TECHNICAL.md](TECHNICAL.md) | Architecture, request flow, the full MCP surface, decisions mapped to business problems, stack rationale, testing, security posture | Engineers |
+| [docs/GLOSSARY.md](docs/GLOSSARY.md) | Every term this repo uses, in plain English and precisely | Everyone |
+| [docs/process.md](docs/process.md) | The build order, phase by phase, matched to commits | Engineers |
+| [docs/adr/](docs/adr/) | Eight architecture decision records with consequences and challenges | Engineers |
+
+A personal reference application: a deliberate exercise in exposing a serious DDD backend to AI
+clients through MCP. It pairs with [LedgerLite](https://github.com/Alex5350/ledgerlite) (REST
+API) and [LedgerLite Web](https://github.com/Alex5350/ledgerlite-web) (Blazor) as a set.
 
 ## License
 

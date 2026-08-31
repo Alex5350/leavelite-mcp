@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="768" viewBox="0 0 1200 768" role="img" aria-labelledby="cvTitle cvDesc">
+  <title id="cvTitle">LeaveLite: a manager and an AI assistant handling leave in conversation</title>
+  <desc id="cvDesc">A mock chat conversation. Ada, a team manager, asks who is off next Friday; the assistant calls the get_team_calendar tool and reports that nobody is out, with Bruno's approved trip and Carla's pending request coming up. Ada asks to book next Tuesday as a vacation day for Bruno; the assistant calls request_leave and reports that the request was submitted and now sits in Ada's approvals queue, with 8 hours to consume on approval and weekends never counted. Ada asks to also book Bruno for the first week of the next month; the assistant's request_leave call is rejected with the stable error code LeaveRequest.OverlappingRequest, which the assistant explains as an overlap with Bruno's existing approved trip, offering to cancel and rebook since the trip has not started.</desc>
+  <defs>
+    <pattern id="dotsCv" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#1B2737"/>
+    </pattern>
+  </defs>
+  <style>
+    .t-title { font: 600 20px ui-sans-serif, system-ui, sans-serif; fill: #E2E8F0; }
+    .t-sub   { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #64748B; }
+    .t-chip  { font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #34D399; }
+    .t-who   { font: 600 10px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #64748B; letter-spacing: 1px; }
+    .t-human { font: 500 13.5px ui-sans-serif, system-ui, sans-serif; fill: #D7E0EC; }
+    .t-reply { font: 12.5px ui-sans-serif, system-ui, sans-serif; fill: #AAB8CB; }
+    .t-tool  { font: 600 11.5px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #34D399; }
+    .t-res   { font: 10.5px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #64748B; }
+    .t-err   { font: 600 10.5px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #F87171; }
+    .t-av    { font: 600 9px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #94A3B8; letter-spacing: .5px; }
+    .bubble  { fill: #0E1620; stroke: #22304A; stroke-width: 1.2; }
+    .callchp { fill: #0B1118; stroke: #22304A; stroke-width: 1; }
+    .avatar  { fill: #0E1620; stroke: #22304A; stroke-width: 1.2; }
+  </style>
+
+  <rect width="1200" height="768" fill="#0B1118"/>
+  <rect width="1200" height="768" fill="url(#dotsCv)" opacity=".5"/>
+
+  <text x="40" y="44" class="t-title">LeaveLite: leave handled in conversation</text>
+  <text x="40" y="66" class="t-sub">a manager asks in plain words · the assistant answers through the server's tools · the rules decide on the server</text>
+  <rect x="964" y="24" width="196" height="26" rx="13" fill="none" stroke="#34D399" stroke-opacity=".55"/>
+  <text x="1062" y="41" class="t-chip" text-anchor="middle">mock · seeded demo org</text>
+
+  <!-- exchange 1: the calendar question -->
+  <text x="96" y="108" class="t-who">ADA · TEAM MANAGER</text>
+  <circle cx="64" cy="148" r="18" class="avatar"/>
+  <text x="64" y="152" class="t-av" text-anchor="middle">AD</text>
+  <g>
+    <rect class="bubble" x="96" y="116" width="430" height="64" rx="14"/>
+    <rect x="96" y="116" width="4" height="64" rx="2" fill="#38BDF8" opacity=".85"/>
+    <text x="120" y="142" class="t-human">Who's off next Friday?</text>
+    <text x="120" y="164" class="t-human">And what is still waiting on me?</text>
+  </g>
+
+  <text x="1136" y="108" class="t-who" text-anchor="end">ASSISTANT · VIA LEAVELITE (MCP)</text>
+  <circle cx="1164" cy="190" r="18" class="avatar"/>
+  <text x="1164" y="194" class="t-av" text-anchor="middle">AI</text>
+  <g>
+    <rect class="bubble" x="536" y="116" width="600" height="150" rx="14"/>
+    <rect x="536" y="116" width="4" height="150" rx="2" fill="#34D399" opacity=".85"/>
+    <rect class="callchp" x="560" y="134" width="552" height="50" rx="10"/>
+    <circle cx="576" cy="150" r="3" fill="#34D399"/>
+    <text x="588" y="154" class="t-tool">get_team_calendar(from="next Friday", to="next Friday")</text>
+    <text x="588" y="172" class="t-res">result: working day, nobody out · 1 approved trip and 1 pending request upcoming</text>
+    <text x="560" y="210" class="t-reply">Nobody is off next Friday; the whole team is in. Coming up: Bruno is out the</text>
+    <text x="560" y="228" class="t-reply">first full week of next month (approved), and Carla has three days pending</text>
+    <text x="560" y="246" class="t-reply">the week after, waiting in your approvals queue.</text>
+  </g>
+
+  <!-- exchange 2: the booking -->
+  <text x="96" y="300" class="t-who">ADA · TEAM MANAGER</text>
+  <circle cx="64" cy="340" r="18" class="avatar"/>
+  <text x="64" y="344" class="t-av" text-anchor="middle">AD</text>
+  <g>
+    <rect class="bubble" x="96" y="308" width="430" height="64" rx="14"/>
+    <rect x="96" y="308" width="4" height="64" rx="2" fill="#38BDF8" opacity=".85"/>
+    <text x="120" y="334" class="t-human">Book next Tuesday as a vacation day for Bruno,</text>
+    <text x="120" y="356" class="t-human">reason: family visit.</text>
+  </g>
+
+  <text x="1136" y="300" class="t-who" text-anchor="end">ASSISTANT · VIA LEAVELITE (MCP)</text>
+  <circle cx="1164" cy="382" r="18" class="avatar"/>
+  <text x="1164" y="386" class="t-av" text-anchor="middle">AI</text>
+  <g>
+    <rect class="bubble" x="536" y="308" width="600" height="150" rx="14"/>
+    <rect x="536" y="308" width="4" height="150" rx="2" fill="#34D399" opacity=".85"/>
+    <rect class="callchp" x="560" y="326" width="552" height="50" rx="10"/>
+    <circle cx="576" cy="342" r="3" fill="#34D399"/>
+    <text x="588" y="346" class="t-tool">request_leave(bruno@leavelite.io, Vacation, next Tuesday)</text>
+    <text x="588" y="364" class="t-res">result: request id returned · status: Pending</text>
+    <text x="560" y="402" class="t-reply">Submitted, one step from done: the request now sits in your approvals</text>
+    <text x="560" y="420" class="t-reply">queue as team manager. Approve it and 8h consume from his vacation balance;</text>
+    <text x="560" y="438" class="t-reply">the balance is checked before anything is booked.</text>
+  </g>
+
+  <!-- exchange 3: the rejection, surfaced as text -->
+  <text x="96" y="492" class="t-who">ADA · TEAM MANAGER</text>
+  <circle cx="64" cy="532" r="18" class="avatar"/>
+  <text x="64" y="536" class="t-av" text-anchor="middle">AD</text>
+  <g>
+    <rect class="bubble" x="96" y="500" width="430" height="64" rx="14"/>
+    <rect x="96" y="500" width="4" height="64" rx="2" fill="#38BDF8" opacity=".85"/>
+    <text x="120" y="526" class="t-human">Also book Bruno for the first week of next</text>
+    <text x="120" y="548" class="t-human">month; he wants to extend that trip.</text>
+  </g>
+
+  <text x="1136" y="492" class="t-who" text-anchor="end">ASSISTANT · VIA LEAVELITE (MCP)</text>
+  <circle cx="1164" cy="586" r="18" class="avatar"/>
+  <text x="1164" y="590" class="t-av" text-anchor="middle">AI</text>
+  <g>
+    <rect class="bubble" x="536" y="500" width="600" height="172" rx="14"/>
+    <rect x="536" y="500" width="4" height="172" rx="2" fill="#34D399" opacity=".85"/>
+    <rect class="callchp" x="560" y="518" width="552" height="50" rx="10"/>
+    <circle cx="576" cy="534" r="3" fill="#F87171"/>
+    <text x="588" y="538" class="t-tool">request_leave(bruno@leavelite.io, Vacation, Mon to Fri next month)</text>
+    <text x="588" y="556" class="t-err">result: [LeaveRequest.OverlappingRequest] nothing written</text>
+    <text x="560" y="594" class="t-reply">Not booked: that range overlaps his approved trip, so the server answered</text>
+    <text x="560" y="612" class="t-reply">with a stable error code instead of failing silently. His trip has not</text>
+    <text x="560" y="630" class="t-reply">started yet, so I can cancel it and rebook the longer range once you</text>
+    <text x="560" y="648" class="t-reply">say the word.</text>
+  </g>
+
+  <!-- legend -->
+  <circle cx="46" cy="730" r="4" fill="#38BDF8"/><text x="56" y="734" class="t-res">team manager</text>
+  <circle cx="166" cy="730" r="4" fill="#34D399"/><text x="176" y="734" class="t-res">AI assistant</text>
+  <rect x="276" y="722" width="18" height="14" rx="4" fill="none" stroke="#22304A"/>
+  <text x="302" y="734" class="t-res">one tool call to the LeaveLite MCP server, with its readable result</text>
+  <text x="1160" y="734" class="t-res" text-anchor="end">names match the seeded demo organization</text>
+</svg>
